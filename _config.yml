@@ -1,0 +1,16 @@
+# Site settings
+title: Dandandan
+email:
+description: >
+  "But of what are we accused?" asked Passepartout, impatiently.
+  "You are about to be informed."
+  "I am an English subject, sir," said Mr. Fogg, "and I have the right—"
+  "Have you been ill-treated?"
+
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://Dandandan.github.io" # the base hostname & protocol for your site
+twitter_username:
+github_username:  Dandandan
+
+# Build settings
+markdown: kramdown
