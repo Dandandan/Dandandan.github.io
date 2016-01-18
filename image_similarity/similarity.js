@@ -132,7 +132,7 @@ function append_filenames(matched, files) {
   matched.forEach(function(v) {
     document.body.innerHTML += "<br>Matched " + files[v[0]].name + " with " + files[v[1]].name + ", distance: " + v[2];
   });
-  if (matched.lenght == 0) {
+  if (matched.length == 0) {
     document.body.innerHTML += "No matches found";
   }
 }
