@@ -145,6 +145,7 @@ $().ready(function() {
     let URL = window.URL || window.webkitURL;
     let files = e.target.files;
     let hashes = [];
+    $('#results').html('Building Data Trees, Concatenating Sub-Contractors, Iterating Cellular Automata');
     for (var f = 0; f < files.length; f++) {
       let file = files[f];
       let url = URL.createObjectURL(file);
