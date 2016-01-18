@@ -129,12 +129,14 @@ function compare_hashes(hashes) {
 }
 
 function append_filenames(matched, files) {
+  var res = '';
   matched.forEach(function(v) {
-    document.body.innerHTML += "<br>Matched " + files[v[0]].name + " with " + files[v[1]].name + ", distance: " + v[2];
+    res += "<br>Matched " + files[v[0]].name + " with " + files[v[1]].name + ", distance: " + v[2];
   });
   if (matched.length == 0) {
-    document.body.innerHTML += "No matches found";
+    res += "<br>No matches found";
   }
+  $('#results').html(res);
 }
 
 // Uploading code
