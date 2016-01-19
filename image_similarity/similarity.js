@@ -3,23 +3,6 @@ var SIMILARITY_TRESHOLD = 5;
 pica.WW = false;
 
 /**
- * Resize image to specified dimension
- *
- * @param image  Image                    Image to scale 
- * @param width  Number                   Width of resized picture
- * @param height Number                   Height of resized picture
- * @returns      CanvasRenderingContext2D Rendering context
- */
-function resize(image, width, height) {
-  var canvas = document.createElement('canvas');
-  var context = canvas.getContext('2d');
-  canvas.width = width;
-  canvas.height = height;
-  context.drawImage(image, 0, 0, width, height);
-  return context;
-}
-
-/**
  * Convert image to Canvas
  *
  * @param Image image
@@ -133,7 +116,7 @@ function append_filenames(matched, files) {
   matched.forEach(function(v) {
     res += "<br>Matched " + files[v[0]].name + " with " + files[v[1]].name + ", distance: " + v[2];
   });
-  if (matched.length == 0) {
+  if (matched.length === 0) {
     res += "<br>No matches found";
   }
   $('#results').html(res);
@@ -142,23 +125,30 @@ function append_filenames(matched, files) {
 // Uploading code
 $().ready(function() {
   $('#fileInput').change(function(e) {
-    let URL = window.URL || window.webkitURL;
-    let files = e.target.files;
-    let hashes = [];
-    $('#results').html('Building Data Trees, Concatenating Sub-Contractors, Iterating Cellular Automata');
-    for (var f = 0; f < files.length; f++) {
-      let file = files[f];
-      let url = URL.createObjectURL(file);
-      let img = new Image();
+    var URL = window.URL || window.webkitURL;
+    var files = e.target.files;
+    if (files.length === 0) {
+      $('#results').html('No images given');
+    }
+    var hashes = [];
+    var index = 0;
+    function process(index) {
+      $('#results').html('Processing: ' + index + ' of ' + files.length);
+
+      var file = files[index];
+      var url = URL.createObjectURL(file);
+      var img = new Image();
       img.onload = function() {
-        let hash = image_hash(this);
+        var hash = image_hash(this);
         hashes.push(hash);
-        if (hashes.length == e.target.files.length) {
+        if (hashes.length === files.length) {
           var matched = compare_hashes(hashes);
           append_filenames(matched, files)
         }
+        else process(index + 1);
       }
       img.src = url;
     }
+    process(0);
   })
 });
