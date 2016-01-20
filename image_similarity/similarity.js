@@ -3,6 +3,20 @@ var SIMILARITY_TRESHOLD = 5;
 pica.WW = false;
 
 /**
+ * Halve dimensions of image, this uses the fast in 4x4 averaging of colors in browser
+ * @param 
+ * @returns 
+ */
+function down_stepping(canvas) {
+  var newCanvas = document.createElement('canvas');
+  newCanvas.width = canvas.width / 2;
+  newCanvas.height = canvas.height / 2;
+  var context = newCanvas.getContext('2d');
+  context.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height) ;
+  return newCanvas;
+}
+
+/**
  * Convert image to Canvas
  *
  * @param Image image
@@ -13,7 +27,7 @@ function image_to_canvas(image) {
   canvas.width = image.width;
   canvas.height = image.height;
   var context = canvas.getContext('2d');
-  context.drawImage(image, 0, 0, image.width, image.height);
+  context.drawImage(image, 0, 0);
   return canvas;
 }
 
@@ -50,6 +64,11 @@ function grayscale(context, width, height) {
  */
 function image_hash(image) {
   var canvas = image_to_canvas(image);
+  var down_step = 0;
+  var max_down_step = 2;
+  while (canvas.height >= 32 && canvas.width >= 32 && down_step < max_down_step) {
+    canvas = down_stepping(canvas);
+  }
   var result = document.createElement('canvas');
   result.width = 8;
   result.height = 8;
@@ -110,45 +129,3 @@ function compare_hashes(hashes) {
   
   return [].concat.apply([], distLists)
 }
-
-function append_filenames(matched, files) {
-  var res = '';
-  matched.forEach(function(v) {
-    res += "<br>Matched " + files[v[0]].name + " with " + files[v[1]].name + ", distance: " + v[2];
-  });
-  if (matched.length === 0) {
-    res += "<br>No matches found";
-  }
-  $('#results').html(res);
-}
-
-// Uploading code
-$().ready(function() {
-  $('#fileInput').change(function(e) {
-    var URL = window.URL || window.webkitURL;
-    var files = e.target.files;
-    if (files.length === 0) {
-      $('#results').html('No images given');
-    }
-    var hashes = [];
-    var index = 0;
-    function process(index) {
-      $('#results').html('Processing: ' + index + ' of ' + files.length);
-
-      var file = files[index];
-      var url = URL.createObjectURL(file);
-      var img = new Image();
-      img.onload = function() {
-        var hash = image_hash(this);
-        hashes.push(hash);
-        if (hashes.length === files.length) {
-          var matched = compare_hashes(hashes);
-          append_filenames(matched, files)
-        }
-        else process(index + 1);
-      }
-      img.src = url;
-    }
-    process(0);
-  })
-});
