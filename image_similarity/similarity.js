@@ -64,16 +64,15 @@ function grayscale(context, width, height) {
  */
 function image_hash(image) {
   var canvas = image_to_canvas(image);
-  var down_step = 0;
-  var max_down_step = 2;
-  while (canvas.height >= 32 && canvas.width >= 32 && down_step < max_down_step) {
+  // down_step to min 16 pixel image
+  while (canvas.height >= 16 && canvas.width >= 16) {
     canvas = down_stepping(canvas);
-    down_step += 1;
   }
   var result = document.createElement('canvas');
   result.width = 8;
   result.height = 8;
   var bits;
+  // resize with high quality to 8x8 image
   pica.resizeCanvas(canvas, result, {quality: 3}, function(_e, d) {
     var context = result.getContext('2d');
 
