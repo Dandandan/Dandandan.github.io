@@ -68,6 +68,7 @@ function image_hash(image) {
   var max_down_step = 2;
   while (canvas.height >= 32 && canvas.width >= 32 && down_step < max_down_step) {
     canvas = down_stepping(canvas);
+    down_step += 1;
   }
   var result = document.createElement('canvas');
   result.width = 8;
