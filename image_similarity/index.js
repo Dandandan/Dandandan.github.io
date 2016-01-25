@@ -48,6 +48,9 @@ $().ready(function() {
   $('#sensitivity').mousemove(function() {
     sensitivity = $(this).val();
     $('#sensVal').html(sensitivity);
+    if (hashes.length == 0) {
+      return;
+    }
     var matched = compare_hashes(hashes, sensitivity);
     append_filenames(matched, files)
   });
