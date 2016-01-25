@@ -12,16 +12,21 @@ function append_filenames(matched, files) {
 
 // Processing imagets
 $().ready(function() {
+  var sensitivity = 8;
+  
+  var hashes = [];
+  var files;
+  
   $('#fileInput').change(function(e) {
     var URL = window.URL || window.webkitURL;
-    var files = e.target.files;
+    files = e.target.files;
     if (files.length === 0) {
       $('#results').html('No images given');
     }
-    var hashes = [];
+    hashes = [];
     var index = 0;
     function process(index) {
-      $('#results').html('Processing: ' + index + ' of ' + files.length);
+      $('#progress').html('Processing: ' + index + ' of ' + files.length);
 
       var file = files[index];
       var url = URL.createObjectURL(file);
@@ -30,7 +35,7 @@ $().ready(function() {
         var hash = image_hash(this);
         hashes.push(hash);
         if (hashes.length === files.length) {
-          var matched = compare_hashes(hashes);
+          var matched = compare_hashes(hashes, sensitivity);
           append_filenames(matched, files)
         }
         else process(index + 1);
@@ -38,5 +43,12 @@ $().ready(function() {
       img.src = url;
     }
     process(0);
-  })
+  });
+  
+  $('#sensitivity').mousemove(function() {
+    sensitivity = $(this).val();
+    $('#sensVal').html(sensitivity);
+    var matched = compare_hashes(hashes, sensitivity);
+    append_filenames(matched, files)
+  });
 });

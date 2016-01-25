@@ -1,4 +1,3 @@
-var SIMILARITY_TRESHOLD = 5;
 
 pica.WW = false;
 
@@ -110,16 +109,17 @@ function hamming_distance(hash1, hash2) {
 /**
  * Compare all hashes
  *
- * @param [Images]
+ * @param hashes [String] Array of hashes
+ * @paran max_distance Number   Maximum hamming distance 
  * @returns [(Int, Int, Int)] Pairs with index, 
  */
-function compare_hashes(hashes) {  
+function compare_hashes(hashes, max_distance) {  
   // Compute distances between images
   var distLists = hashes.map(function(hash, index) {
     var dists = [];
     for (var other = index + 1; other < hashes.length; other++) {
       var dist = hamming_distance(hashes[index], hashes[other]);
-      if (dist <= SIMILARITY_TRESHOLD) {
+      if (dist <= max_distance) {
         dists.push([index, other, dist]);
       }
     }

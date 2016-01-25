@@ -4,14 +4,21 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"> </script>
     <script type="text/javascript" src="pica.min.js"></script>
     <script type="text/javascript" src="similarity.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+    <link href='style.css' rel='stylesheet' type='text/css'>
+
     <script type="text/javascript" src="index.js"></script>
   </head>
   <body>
     <h1>Bundle duplicate detection</h1>
     <h2>Select images </h2>
-    <input type="file" id="fileInput" multiple>
+    <b>Sensitivity (higher means more matches)</b><br>
+    <input id="sensitivity" type="range" min="0" max="18" value="8" /> <div id="sensVal">8</div> <br/>
+    <input type="file" id="fileInput" multiple />
+    <hr>
     <div>
       <h4>Output</h4>
+      <div id="progress"></div>
       <div id="results">
       </div>
     </div>
