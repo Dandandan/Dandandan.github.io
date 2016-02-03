@@ -56,7 +56,7 @@ function grayscale(context, width, height) {
 }
 
 /**
- * Computes hash of image using "avarage hashing"
+ * Computes hash of image using "difference hashing (original)"
  *
  * @param image
  * @returns [Number] bit vector
@@ -68,25 +68,19 @@ function image_hash(image) {
     canvas = down_stepping(canvas);
   }
   var result = document.createElement('canvas');
-  result.width = 8;
+  result.width = 9;
   result.height = 8;
-  var bits;
+  var bits = [];
   // resize with high quality to 8x8 image
   pica.resizeCanvas(canvas, result, {quality: 3}, function(_e, d) {
     var context = result.getContext('2d');
 
-    var grayScaled = grayscale(context, 8, 8);
-    
-    var sum = grayScaled.reduce(function(a, b) {
-      return a + b;
-    });
-
-    var average = sum / grayScaled.length;
-    
-    // compute whether value is lower than average value
-    bits = grayScaled.map(function(v) {
-      return v < average ? 1 : 0;
-    });
+    var grayScaled = grayscale(context, 9, 8);
+    for (var i = 0; i < 8; i++ ) {
+      for (var j = 1; j < 9; j++ ) {
+        bits.push(grayScaled[i + j] < grayScaled[i + j - 1] ? 1 : 0);
+      }
+    }
   });
   return bits;
   }
@@ -106,20 +100,28 @@ function hamming_distance(hash1, hash2) {
   return dist;
 }
 
+function time_diff(date1, date2) {
+   if (!date1 || !date2) {
+     return Infinity;
+   }
+   return Math.abs(date1.getTime() - date2.getTime());
+}
+
 /**
  * Compare all hashes
  *
  * @param hashes [String] Array of hashes
- * @paran max_distance Number   Maximum hamming distance 
+ * @param dates_taken [Dates]   Date/time of photo
+ * @param max_distance Number   Maximum hamming distance
  * @returns [(Int, Int, Int)] Pairs with index, 
  */
-function compare_hashes(hashes, max_distance) {  
+function compare_hashes(hashes, dates_taken, max_distance, max_time_diff) {  
   // Compute distances between images
   var distLists = hashes.map(function(hash, index) {
     var dists = [];
     for (var other = index + 1; other < hashes.length; other++) {
       var dist = hamming_distance(hashes[index], hashes[other]);
-      if (dist <= max_distance) {
+      if (dist <= max_distance && time_diff(dates_taken[index], dates_taken[other]) < max_time_diff) {
         dists.push([index, other, dist]);
       }
     }

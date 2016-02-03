@@ -1,21 +1,38 @@
 // Output results
-function append_filenames(matched, files) {
+function present_results(matched, urls) {
   var res = '';
   matched.forEach(function(v) {
-    res += "<br>Matched " + files[v[0]].name + " with " + files[v[1]].name + ", distance: " + v[2];
+    res += '<img width="40" height ="40" src="' + urls[v[0]] + '"></img>';
+    res += '<img width="40" height ="40" src="' + urls[v[1]] + '"></img>';
+    res += '<br>';
   });
   if (matched.length === 0) {
-    res += "<br>No matches found";
+    res += '<br>No matches found';
   }
   $('#results').html(res);
 }
 
 // Processing imagets
 $().ready(function() {
-  var sensitivity = 8;
+  var sensitivity = $('#sensitivity').val();
   
   var hashes = [];
   var files;
+  var urls;
+  var dates;
+  var max_time = 15000;
+  
+  function update_results() {
+    if (hashes.length == 0) {
+      return;
+    }
+
+    if (!$('#limitTime').is(":checked")) {
+      max_time = Infinity;
+    }
+    var matched = compare_hashes(hashes, dates, sensitivity, max_time);
+    present_results(matched, urls);
+  }
   
   $('#fileInput').change(function(e) {
     var URL = window.URL || window.webkitURL;
@@ -24,21 +41,38 @@ $().ready(function() {
       $('#results').html('No images given');
     }
     hashes = [];
+    dates = [];
+    urls = [];
     var index = 0;
     function process(index) {
       $('#progress').html('Processing: ' + index + ' of ' + files.length);
 
       var file = files[index];
       var url = URL.createObjectURL(file);
+      urls.push(url);
       var img = new Image();
       img.onload = function() {
         var hash = image_hash(this);
         hashes.push(hash);
-        if (hashes.length === files.length) {
-          var matched = compare_hashes(hashes, sensitivity);
-          append_filenames(matched, files)
-        }
-        else process(index + 1);
+        EXIF.getData(this, function() {
+          date = EXIF.getTag(this, 'DateTimeOriginal');
+          if (date) {
+            date = date.split(' ');
+            date[0] = date[0].replace(/:/g, ',');
+
+            dates.push(new Date(date[0] + ' ' + date[1]));
+          } else {
+            dates.push(null);
+          }
+          update_results();
+          
+          if (hashes.length !== files.length) {
+            process(index + 1);
+          }
+          else {
+            $('#progress').html('');
+          }
+        });
       }
       img.src = url;
     }
@@ -48,10 +82,14 @@ $().ready(function() {
   $('#sensitivity').mousemove(function() {
     sensitivity = $(this).val();
     $('#sensVal').html(sensitivity);
-    if (hashes.length == 0) {
-      return;
-    }
-    var matched = compare_hashes(hashes, sensitivity);
-    append_filenames(matched, files)
+    update_results();
+  });
+  
+  $('#limitTime').change(update_results);
+  
+  $('#maxTime').mousemove(function() {
+    max_time = $(this).val() * 1000;
+    $('#maxTimeVal').html($(this).val());
+    update_results();
   });
 });
