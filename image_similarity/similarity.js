@@ -122,7 +122,7 @@ function compare_hashes(hashes, dates_taken, max_distance, max_time_diff) {
     for (var other = index + 1; other < hashes.length; other++) {
       var dist = hamming_distance(hashes[index], hashes[other]);
       if (dist <= max_distance && time_diff(dates_taken[index], dates_taken[other]) < max_time_diff) {
-        dists.push([index, other, dist]);
+        dists.push([index, other]);
       }
     }
     
@@ -130,4 +130,43 @@ function compare_hashes(hashes, dates_taken, max_distance, max_time_diff) {
   });
   
   return [].concat.apply([], distLists)
+}
+
+function unique(array) {
+   var u = Object.create(null), a = [];
+   for(var i = 0, l = array.length; i < l; ++i){
+      if (u[array[i]] !== undefined) {
+        continue;
+      }
+      a.push(array[i]);
+      u[array[i]] = 1;
+   }
+   return a;
+}
+
+
+function cluster_images(matches) {
+  var clusters = [];
+  var indices = {};
+  matches.forEach(function(m) {
+    if (indices[m[0]] !== undefined) {
+      var index = indices[m[0]];
+      clusters[index].push(m[1]);
+      indices[m[1]] = index;
+    }
+    else if (indices[m[1]] !== undefined) {
+      var index = indices[m[1]];
+      clusters[index].push(m[0]);
+      indices[m[0]] = index;
+    }
+    else {
+      var newIndex = clusters.length
+      indices[m[0]] = newIndex;
+      indices[m[1]] = newIndex;
+      clusters.push([]);
+      clusters[newIndex].push(m[0]);
+      clusters[newIndex].push(m[1]);
+    }
+  });
+  return clusters.map(unique);
 }

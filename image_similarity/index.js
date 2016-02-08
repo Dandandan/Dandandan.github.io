@@ -1,9 +1,10 @@
 // Output results
 function present_results(matched, urls) {
   var res = '';
-  matched.forEach(function(v) {
-    res += '<img width="40" height ="40" src="' + urls[v[0]] + '"></img>';
-    res += '<img width="40" height ="40" src="' + urls[v[1]] + '"></img>';
+  matched.forEach(function(images) {
+    images.forEach(function(imgIndex) {
+      res += '<img width="40" height ="40" src="' + urls[imgIndex] + '"></img>'
+    });
     res += '<br>';
   });
   if (matched.length === 0) {
@@ -14,13 +15,10 @@ function present_results(matched, urls) {
 
 // Processing imagets
 $().ready(function() {
-  var sensitivity = $('#sensitivity').val();
-  
   var hashes = [];
   var files;
   var urls;
   var dates;
-  var max_time = 15000;
   
   function update_results() {
     if (hashes.length == 0) {
@@ -30,13 +28,15 @@ $().ready(function() {
     if (!$('#limitTime').is(":checked")) {
       max_time = Infinity;
     }
-    var matched = compare_hashes(hashes, dates, sensitivity, max_time);
-    present_results(matched, urls);
+    var matched = compare_hashes(hashes, dates, $('#sensitivity').val(), $('#maxTime').val() * 1000);
+    var clustered = cluster_images(matched);
+    present_results(clustered, urls);
   }
   
   $('#fileInput').change(function(e) {
     var URL = window.URL || window.webkitURL;
     files = e.target.files;
+    $('#results').html('');
     if (files.length === 0) {
       $('#results').html('No images given');
     }
@@ -45,7 +45,7 @@ $().ready(function() {
     urls = [];
     var index = 0;
     function process(index) {
-      $('#progress').html('Processing: ' + index + ' of ' + files.length);
+      $('#progress').html('Processing: ' + index + ' of ' + files.length + '...');
 
       var file = files[index];
       var url = URL.createObjectURL(file);
@@ -64,13 +64,14 @@ $().ready(function() {
           } else {
             dates.push(null);
           }
-          update_results();
           
           if (hashes.length !== files.length) {
             process(index + 1);
           }
           else {
             $('#progress').html('');
+            
+            update_results();
           }
         });
       }
@@ -80,7 +81,6 @@ $().ready(function() {
   });
   
   $('#sensitivity').mousemove(function() {
-    sensitivity = $(this).val();
     $('#sensVal').html(sensitivity);
     update_results();
   });
@@ -88,7 +88,6 @@ $().ready(function() {
   $('#limitTime').change(update_results);
   
   $('#maxTime').mousemove(function() {
-    max_time = $(this).val() * 1000;
     $('#maxTimeVal').html($(this).val());
     update_results();
   });
