@@ -82,6 +82,21 @@ function image_hash(image) {
       }
     }
   });
+  
+  var result = document.createElement('canvas');
+  result.width = 8;
+  result.height = 9;
+
+  pica.resizeCanvas(canvas, result, {quality: 3}, function(_e, d) {
+    var context = result.getContext('2d');
+
+    var grayScaled = grayscale(context, 8, 9);
+    for (var i = 0; i < 9; i++ ) {
+      for (var j = 1; j < 8; j++ ) {
+        bits.push(grayScaled[i + j] < grayScaled[i + j - 1] ? 1 : 0);
+      }
+    }
+  });
   return bits;
   }
 

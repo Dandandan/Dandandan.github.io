@@ -127,7 +127,7 @@ $().ready(function() {
   });
   
   $('#sensitivity').mousemove(function() {
-    $('#sensVal').html(sensitivity);
+    $('#sensVal').html($(this).val());
     update_results();
   });
   
