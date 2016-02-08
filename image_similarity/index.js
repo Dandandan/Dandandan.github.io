@@ -1,9 +1,55 @@
+function open_popup(images, urls) {
+  $('#enlarged-duplicate').html(
+    `<div class="selected">
+      <img src="${urls[images[0]]}" alt="" />
+    </div>
+    <div class="info">
+      <h4 class="graphite">img-299.jpg</h4>
+      <p>May 05, 2015 at 13:11 &bull; Edited with VSCO cam</p>
+    </div>
+    <div class="angled-bg"></div>'`);
+
+    $('#duplicate-selection').html(
+      `<a href="#" class="thumbnail current select">
+        <span></span>
+        <img src="${urls[images[0]]}" alt"">
+      </a>`
+    );
+    $('#duplicate-selection').append(
+      images.slice(1).map(image =>
+        `<a href="#" class="thumbnail select">
+          <span></span>
+          <img src="${urls[image]}" alt"">
+        </a>
+        `
+      )
+    );
+    $( ".navigation a" ).click(function() {
+      var src = $(this).find('img').attr('src');
+      $('.enlarged-duplicate img').attr("src", src);
+      $('.current').removeClass('current');
+      $(this).addClass('current');
+    });
+  
+    $( ".navigation a.select span" ).click(function() {
+      $(this).parent('a').toggleClass('selected');
+    });
+    
+    $('#close-duplicate-popup').click(function() {
+      $('#selection-popup').hide();
+    });
+
+    $('#selection-popup').show();
+}
+
 // Output results
 function present_results(matched, urls) {
   var res = '';
   matched.forEach(function(images) {
     images.forEach(function(imgIndex) {
-      res += '<img width="40" height ="40" src="' + urls[imgIndex] + '"></img>'
+      res += '<a class="thumbnail" href="#" onclick="open_popup([' + images +  '], [\'' + urls.join('\',\'') + '\'])">';
+      res += '<img width="40" height ="40" src="' + urls[imgIndex] + '"></img>';
+      res += '</a>';
     });
     res += '<br>';
   });
@@ -45,7 +91,7 @@ $().ready(function() {
     urls = [];
     var index = 0;
     function process(index) {
-      $('#progress').html('Processing: ' + index + ' of ' + files.length + '...');
+      $('#progress').html(`Processing: ${index} of ${files.length}...`);
 
       var file = files[index];
       var url = URL.createObjectURL(file);
