@@ -1,0 +1,22 @@
+$graphite: #42505B;
+$light-graphite: #9AADBA;
+$bundle-blue: #48A0DC;
+$bundle-green: #38C876;
+$ice: #F0F3F6;
+
+// Mixins
+@mixin border-radius($radius: 3px) {
+  -webkit-border-radius: $radius;
+  border-radius: $radius;
+  background-clip: padding-box;  /* stops bg color from leaking outside the border: */
+}
+
+@mixin border-top-radius($radius: 3px) {
+  border-top-left-radius: $radius;
+  border-top-right-radius: $radius;
+}
+
+@mixin border-bottom-radius($radius: 3px) {
+  border-bottom-left-radius: $radius;
+  border-bottom-right-radius: $radius;
+}

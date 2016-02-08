@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Duplicate photo finder prototype</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <div class="modal-container">
+      <header>
+        <h4>Kies de foto's die je wilt bewaren</h4>
+        <span class="meta">10 dubbele foto's gevonden</span>
+        <a class="close" href="#">close</a>
+      </header>
+      <div class="enlarged-duplicate">
+        <div class="selected">
+          <img src="images/foto.jpg" alt="" />
+        </div>
+        <div class="info">
+          <h4 class="graphite">img-299.jpg</h4>
+          <p>May 05, 2015 at 13:11 &bull; Edited with VSCO cam</p>
+        </div>
+        <div class="angled-bg"></div>
+      </div>
+
+
+
+      <div class="navigation">
+        <a href="#" class="thumbnail current select">
+          <span></span>
+          <img src="images/foto.jpg" alt"">
+        </a>
+        <a href="#" class="thumbnail select">
+          <span></span>
+          <img src="images/foto2.jpg" alt"">
+        </a>
+        <a href="#" class="thumbnail select">
+          <span></span>
+          <img src="images/foto3.jpg" alt"">
+        </a>
+      </div>
+
+      <footer>
+        <a class="btn-outline">No Thanks</a>
+        <a class="btn-filled">Keep selected and remove the rest</a>
+      </footer>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
